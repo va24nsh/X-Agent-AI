@@ -1,0 +1,506 @@
+{
+  "name": "X Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://newsdata.io/api/1/news?apikey=pub_203264e38665cb9f7b2c5832471b57b9f808a&language=en&q=\"AI Agents\" AND \"Education\" AND \"Business\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -976,
+        256
+      ],
+      "id": "33508fba-10f9-4fac-ab4a-b4abe51489a2",
+      "name": "HTTP Request2",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst articles = $input.first().json.results || []\n\nreturn articles.map(article => ({\n  json: {\n    tweeet: article.description || null,\n    tags: article.keywords || null\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        256
+      ],
+      "id": "0f070a8f-2b27-45f2-9368-78638417a819",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "amount": "={{ 60 + Math.floor(Math.random() * 60) }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        512
+      ],
+      "id": "0f8322f1-5236-42c9-b221-9667aeb35f71",
+      "name": "Wait",
+      "webhookId": "80b57f45-a744-495f-a25d-6a009f00db1b"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -736,
+        496
+      ],
+      "id": "a4a2da30-4785-46ab-88d4-3fc171d9ce1f",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        512
+      ],
+      "id": "405fbdba-4105-4b97-9050-709c7fafed7c",
+      "name": "Create Tweet",
+      "executeOnce": false,
+      "retryOnFail": false,
+      "notesInFlow": false,
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "BQinEUP79aGI1Wg8",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a skilled social media copywriter known for writing sharp, engaging tweets that drive organic growth and interaction.",
+              "role": "model"
+            },
+            {
+              "content": "=Craft a tweet based on this input: {{ $json.tweeet }}. Use the following hashtags in a natural, relevant way: {{ $json.tags }}.\n\nMake it feel like it was written by a thoughtful human — not too robotic or forced. Keep the tone confident, insightful, and readable.\n\nImportant:\n\nKeep the entire output within 250 characters (including hashtags, punctuation, and spaces).\n\nDo not mention AI, LLMs, or give any indication that the tweet was generated or automated.\n\nReturn only the final tweet as a single text block, ready for posting."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        256
+      ],
+      "id": "7ae44fa1-cb34-467f-801a-dd4c77ec7ae9",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "WRcVCXTGzHTI7zHh",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1152,
+        256
+      ],
+      "id": "f930f3ed-333e-48ac-99ea-a423329d995b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s",
+          "mode": "list",
+          "cachedResultName": "testing...",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tweets": "={{ $json.content.parts[0].text }}",
+            "Status": "PENDING"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Tweets",
+              "displayName": "Tweets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Published At",
+              "displayName": "Published At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -256,
+        256
+      ],
+      "id": "4211d575-39b4-4e2d-9a24-c69ed57a812f",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NsoyDOsUS6a5Wjoj",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": "={{ 60 + Math.floor(Math.random() * 60) }}\n",
+              "unit": "minutes"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s",
+          "mode": "list",
+          "cachedResultName": "testing...",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit#gid=0"
+        },
+        "event": "rowUpdate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1152,
+        496
+      ],
+      "id": "d201c6ec-9163-44e7-a5f4-3766028abae5",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "30hsMkpEPuLTWSaE",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s",
+          "mode": "list",
+          "cachedResultName": "testing...",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "POSTED",
+            "Tweets": "={{ $json.Tweets }}",
+            "Published At": "={{ DateTime.now() }}"
+          },
+          "matchingColumns": [
+            "Tweets"
+          ],
+          "schema": [
+            {
+              "id": "Tweets",
+              "displayName": "Tweets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Published At",
+              "displayName": "Published At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -304,
+        512
+      ],
+      "id": "378f4286-4f1b-4d44-ad77-a9d665871918",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NsoyDOsUS6a5Wjoj",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b8d4df30-bd4e-4745-af54-a0343d7e635b",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "=APPROVED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -960,
+        496
+      ],
+      "id": "c5969c71-a4bb-4b20-a86b-2081a72d4579",
+      "name": "Filter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Create Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tweet": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fe0d3811-a5b1-4901-815d-969cf10d7389",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4ce639107ffc5292ba6ea24921c67b686e6b4a16acec51000c57403bb37bd292"
+  },
+  "id": "nN9n1CA2JSmAvdCf",
+  "tags": []
+}
