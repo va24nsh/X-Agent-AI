@@ -9,8 +9,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -976,
-        256
+        -1184,
+        -16
       ],
       "id": "33508fba-10f9-4fac-ab4a-b4abe51489a2",
       "name": "HTTP Request2",
@@ -23,8 +23,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -816,
-        256
+        -832,
+        -16
       ],
       "id": "0f070a8f-2b27-45f2-9368-78638417a819",
       "name": "Code"
@@ -36,8 +36,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -112,
-        512
+        288,
+        576
       ],
       "id": "0f8322f1-5236-42c9-b221-9667aeb35f71",
       "name": "Wait",
@@ -52,8 +52,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -736,
-        496
+        -592,
+        464
       ],
       "id": "a4a2da30-4785-46ab-88d4-3fc171d9ce1f",
       "name": "Loop Over Items"
@@ -66,8 +66,8 @@
       "type": "n8n-nodes-base.twitter",
       "typeVersion": 2,
       "position": [
-        -496,
-        512
+        -304,
+        592
       ],
       "id": "405fbdba-4105-4b97-9050-709c7fafed7c",
       "name": "Create Tweet",
@@ -105,8 +105,8 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -608,
-        256
+        -480,
+        64
       ],
       "id": "7ae44fa1-cb34-467f-801a-dd4c77ec7ae9",
       "name": "Message a model",
@@ -130,8 +130,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1152,
-        256
+        -1616,
+        -16
       ],
       "id": "f930f3ed-333e-48ac-99ea-a423329d995b",
       "name": "Schedule Trigger"
@@ -198,8 +198,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        -256,
-        256
+        112,
+        48
       ],
       "id": "4211d575-39b4-4e2d-9a24-c69ed57a812f",
       "name": "Append row in sheet",
@@ -241,8 +241,8 @@
       "type": "n8n-nodes-base.googleSheetsTrigger",
       "typeVersion": 1,
       "position": [
-        -1152,
-        496
+        -1520,
+        464
       ],
       "id": "d201c6ec-9163-44e7-a5f4-3766028abae5",
       "name": "Google Sheets Trigger",
@@ -331,8 +331,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        -304,
-        512
+        16,
+        368
       ],
       "id": "378f4286-4f1b-4d44-ad77-a9d665871918",
       "name": "Update row in sheet",
@@ -371,11 +371,194 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
       "position": [
-        -960,
-        496
+        -976,
+        464
       ],
       "id": "c5969c71-a4bb-4b20-a86b-2081a72d4579",
       "name": "Filter"
+    },
+    {
+      "parameters": {
+        "content": "## Triggered when a new row is added \nin the sheet with random polling rate to replicate a natural timing.",
+        "height": 256,
+        "width": 496,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1696,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "b77bcc40-6795-4605-a6c9-f62f79a56364",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Filters rows\nthat are has an **Approved** status.",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1056,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "32375679-e84c-4301-a03b-7aec4a2afefd",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Posts the tweet\nvia connected Twitter API.",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        512
+      ],
+      "typeVersion": 1,
+      "id": "c18788e6-68e7-45c5-9954-df37a3a6770b",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Marks the tweet as **POSTED**. Also adds the result (publish time).",
+        "height": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "cbffe0e8-b002-4f48-be8c-7640cd4b9a21",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Natural delay\nbetween tweets (rate limit / humanize).",
+        "height": 224,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "73edada1-714e-4dab-a942-35c0b8b6b732",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Iterates (optional)\nover each filtered tweet entry.",
+        "height": 208,
+        "width": 224,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -656,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "887995fd-3eae-4f63-96b9-ab1518eceb6e",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Runs periodically \nto generate fresh content i.e. daily.",
+        "height": 288,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1696,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "9390877b-0ff3-4a3e-9632-f658ad41e5fe",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Fetches data \nfrom an external source API.",
+        "height": 208,
+        "width": 256,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1264,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "759251c6-da61-4c27-8fe1-d7e520738aca",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Structures the data.",
+        "height": 208,
+        "width": 262
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -912,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "4f9f29b1-1699-4d02-bdb6-f4d03aa8e960",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## Sends prompt to AI model \nto generate humanized, natural content.",
+        "height": 272,
+        "width": 464,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -560,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "9109e3aa-dfac-48c2-b2b6-c28ac5f277a8",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## Adds AI-generated content \nto the Google Sheet to be picked by the second flow later.",
+        "height": 256,
+        "width": 272,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        32,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "078c38b9-4a19-4e9f-b804-e872d1ffb0cb",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## First Flow\nRuns to fetch daily news, and generate tweets over it\n\n\n\n\n\n\n\n## Second Flow\nTriggered after **random** time if there is an updated row",
+        "height": 320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2016,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "4f9251d9-8297-4f16-95c6-5176e2588e19",
+      "name": "Sticky Note11"
     }
   ],
   "pinData": {},
@@ -492,11 +675,13 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "fe0d3811-a5b1-4901-815d-969cf10d7389",
+  "versionId": "8aeb8c23-65a5-49c0-8fd2-1ca7b57cb9cd",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "4ce639107ffc5292ba6ea24921c67b686e6b4a16acec51000c57403bb37bd292"
