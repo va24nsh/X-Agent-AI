@@ -3,41 +3,13 @@
   "nodes": [
     {
       "parameters": {
-        "url": "https://newsdata.io/api/1/news?apikey=pub_203264e38665cb9f7b2c5832471b57b9f808a&language=en&q=\"AI Agents\" AND \"Education\" AND \"Business\"",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        -1184,
-        -16
-      ],
-      "id": "33508fba-10f9-4fac-ab4a-b4abe51489a2",
-      "name": "HTTP Request2",
-      "executeOnce": true
-    },
-    {
-      "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst articles = $input.first().json.results || []\n\nreturn articles.map(article => ({\n  json: {\n    tweeet: article.description || null,\n    tags: article.keywords || null\n  }\n}));\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -832,
-        -16
-      ],
-      "id": "0f070a8f-2b27-45f2-9368-78638417a819",
-      "name": "Code"
-    },
-    {
-      "parameters": {
-        "amount": "={{ 60 + Math.floor(Math.random() * 60) }}"
+        "amount": "={{ 300 + Math.floor(Math.random() * 180) }}"
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        288,
-        576
+        224,
+        560
       ],
       "id": "0f8322f1-5236-42c9-b221-9667aeb35f71",
       "name": "Wait",
@@ -52,22 +24,22 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -592,
-        464
+        -704,
+        432
       ],
       "id": "a4a2da30-4785-46ab-88d4-3fc171d9ce1f",
       "name": "Loop Over Items"
     },
     {
       "parameters": {
-        "text": "={{ $json.output }}",
+        "text": "={{ $json.Tweets }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.twitter",
       "typeVersion": 2,
       "position": [
-        -304,
-        592
+        -352,
+        560
       ],
       "id": "405fbdba-4105-4b97-9050-709c7fafed7c",
       "name": "Create Tweet",
@@ -79,7 +51,460 @@
           "id": "BQinEUP79aGI1Wg8",
           "name": "X account"
         }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1648,
+        -64
+      ],
+      "id": "f930f3ed-333e-48ac-99ea-a423329d995b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": "={{ 60 + Math.floor(Math.random() * 60) }}\n",
+              "unit": "minutes"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s",
+          "mode": "list",
+          "cachedResultName": "testing...",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit#gid=0"
+        },
+        "event": "rowUpdate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1552,
+        432
+      ],
+      "id": "d201c6ec-9163-44e7-a5f4-3766028abae5",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "30hsMkpEPuLTWSaE",
+          "name": "Google Sheets Trigger account"
+        }
       }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s",
+          "mode": "list",
+          "cachedResultName": "testing...",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "POSTED",
+            "Tweets": "={{ $('Loop Over Items').item.json.Tweets }}",
+            "Published At": "={{ DateTime.now() }}"
+          },
+          "matchingColumns": [
+            "Tweets"
+          ],
+          "schema": [
+            {
+              "id": "Tweets",
+              "displayName": "Tweets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Published At",
+              "displayName": "Published At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -80,
+        560
+      ],
+      "id": "378f4286-4f1b-4d44-ad77-a9d665871918",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NsoyDOsUS6a5Wjoj",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b8d4df30-bd4e-4745-af54-a0343d7e635b",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "=APPROVED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1056,
+        432
+      ],
+      "id": "c5969c71-a4bb-4b20-a86b-2081a72d4579",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "content": "## Triggered when a new row is added \nin the sheet with random polling rate to replicate a natural timing.",
+        "height": 256,
+        "width": 464,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1728,
+        336
+      ],
+      "typeVersion": 1,
+      "id": "b77bcc40-6795-4605-a6c9-f62f79a56364",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Filters rows\nthat are has an **Approved** status.",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1120,
+        336
+      ],
+      "typeVersion": 1,
+      "id": "32375679-e84c-4301-a03b-7aec4a2afefd",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Posts the tweet\nvia connected Twitter API.",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -416,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "c18788e6-68e7-45c5-9954-df37a3a6770b",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Marks the tweet as **POSTED**. Also adds the result (publish time).",
+        "height": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "cbffe0e8-b002-4f48-be8c-7640cd4b9a21",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Natural delay\nbetween tweets (rate limit / humanize).",
+        "height": 224,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        464
+      ],
+      "typeVersion": 1,
+      "id": "73edada1-714e-4dab-a942-35c0b8b6b732",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Iterates (optional)\nover each filtered tweet entry.",
+        "height": 208,
+        "width": 224,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -784,
+        336
+      ],
+      "typeVersion": 1,
+      "id": "887995fd-3eae-4f63-96b9-ab1518eceb6e",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Runs periodically \nto generate fresh content i.e. daily.",
+        "height": 256,
+        "width": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1728,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "9390877b-0ff3-4a3e-9632-f658ad41e5fe",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Fetches data \nfrom an external source API.",
+        "height": 208,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1328,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "759251c6-da61-4c27-8fe1-d7e520738aca",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Structures the data.",
+        "height": 176,
+        "width": 262
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1008,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "4f9f29b1-1699-4d02-bdb6-f4d03aa8e960",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## Sends prompt to AI model \nto generate humanized, natural content.",
+        "height": 208,
+        "width": 352,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -272,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "9109e3aa-dfac-48c2-b2b6-c28ac5f277a8",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## Adds AI-generated content \nto the Google Sheet to be picked by the second flow later.",
+        "height": 256,
+        "width": 272,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "078c38b9-4a19-4e9f-b804-e872d1ffb0cb",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## First Flow\nRuns to fetch daily news, and generate tweets over it\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n## Second Flow\nTriggered after **random** time if there is an updated row",
+        "height": 464,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1984,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "4f9251d9-8297-4f16-95c6-5176e2588e19",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        -48
+      ],
+      "id": "269f339e-766b-48b1-b348-173ca490277f",
+      "name": "Wait1",
+      "webhookId": "2f53ba52-b661-49a7-b4cb-bd5c2feb683f"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "include": "specifiedFields",
+        "fieldsToInclude": "Tweets",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        224
+      ],
+      "id": "8f43704a-2206-4ad8-8079-6b69cfa497af",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "content": "## Iterates over news\nto overcome rate limits on API",
+        "height": 208,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -640,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "53b23c7e-f560-4857-82a4-6243c1adaa84",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "url": "https://newsdata.io/api/1/news?apikey=pub_203264e38665cb9f7b2c5832471b57b9f808a&language=en&q=\"Artificial Intelligence\" AND \"Automation\" AND \"Startup\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1264,
+        -64
+      ],
+      "id": "33508fba-10f9-4fac-ab4a-b4abe51489a2",
+      "name": "News API",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst articles = $input.first().json.results || []\n\nreturn articles.map(article => ({\n  json: {\n    tweeet: article.description || null,\n    tags: article.keywords || null\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -928,
+        -64
+      ],
+      "id": "0f070a8f-2b27-45f2-9368-78638417a819",
+      "name": "JS Restructure"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -576,
+        -64
+      ],
+      "id": "3735bb2e-8b2b-4faf-a9cb-3a95c6c32e72",
+      "name": "Loop news"
     },
     {
       "parameters": {
@@ -105,36 +530,17 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -480,
-        64
+        -240,
+        -48
       ],
       "id": "7ae44fa1-cb34-467f-801a-dd4c77ec7ae9",
-      "name": "Message a model",
+      "name": "Gemini",
       "credentials": {
         "googlePalmApi": {
           "id": "WRcVCXTGzHTI7zHh",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
-    },
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "triggerAtHour": 6
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
-      "position": [
-        -1616,
-        -16
-      ],
-      "id": "f930f3ed-333e-48ac-99ea-a423329d995b",
-      "name": "Schedule Trigger"
     },
     {
       "parameters": {
@@ -198,396 +604,199 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        112,
-        48
-      ],
-      "id": "4211d575-39b4-4e2d-9a24-c69ed57a812f",
-      "name": "Append row in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "NsoyDOsUS6a5Wjoj",
-          "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyX",
-              "value": "={{ 60 + Math.floor(Math.random() * 60) }}\n",
-              "unit": "minutes"
-            }
-          ]
-        },
-        "documentId": {
-          "__rl": true,
-          "value": "1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s",
-          "mode": "list",
-          "cachedResultName": "testing...",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": "gid=0",
-          "mode": "list",
-          "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit#gid=0"
-        },
-        "event": "rowUpdate",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheetsTrigger",
-      "typeVersion": 1,
-      "position": [
-        -1520,
-        464
-      ],
-      "id": "d201c6ec-9163-44e7-a5f4-3766028abae5",
-      "name": "Google Sheets Trigger",
-      "credentials": {
-        "googleSheetsTriggerOAuth2Api": {
-          "id": "30hsMkpEPuLTWSaE",
-          "name": "Google Sheets Trigger account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "documentId": {
-          "__rl": true,
-          "value": "1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s",
-          "mode": "list",
-          "cachedResultName": "testing...",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": "gid=0",
-          "mode": "list",
-          "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zBL_UlfRN5kpXBPDhFdeyDDWbHdAf3Qx1w11uGifH1s/edit#gid=0"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Status": "POSTED",
-            "Tweets": "={{ $json.Tweets }}",
-            "Published At": "={{ DateTime.now() }}"
-          },
-          "matchingColumns": [
-            "Tweets"
-          ],
-          "schema": [
-            {
-              "id": "Tweets",
-              "displayName": "Tweets",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "Status",
-              "displayName": "Status",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "Published At",
-              "displayName": "Published At",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "row_number",
-              "displayName": "row_number",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "canBeUsedToMatch": true,
-              "readOnly": true,
-              "removed": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.6,
-      "position": [
-        16,
-        368
-      ],
-      "id": "378f4286-4f1b-4d44-ad77-a9d665871918",
-      "name": "Update row in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "NsoyDOsUS6a5Wjoj",
-          "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "b8d4df30-bd4e-4745-af54-a0343d7e635b",
-              "leftValue": "={{ $json.Status }}",
-              "rightValue": "=APPROVED",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.2,
-      "position": [
-        -976,
-        464
-      ],
-      "id": "c5969c71-a4bb-4b20-a86b-2081a72d4579",
-      "name": "Filter"
-    },
-    {
-      "parameters": {
-        "content": "## Triggered when a new row is added \nin the sheet with random polling rate to replicate a natural timing.",
-        "height": 256,
-        "width": 496,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -1696,
-        352
-      ],
-      "typeVersion": 1,
-      "id": "b77bcc40-6795-4605-a6c9-f62f79a56364",
-      "name": "Sticky Note"
-    },
-    {
-      "parameters": {
-        "content": "## Filters rows\nthat are has an **Approved** status.",
-        "height": 224
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -1056,
-        368
-      ],
-      "typeVersion": 1,
-      "id": "32375679-e84c-4301-a03b-7aec4a2afefd",
-      "name": "Sticky Note1"
-    },
-    {
-      "parameters": {
-        "content": "## Posts the tweet\nvia connected Twitter API.",
-        "height": 224
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -368,
-        512
-      ],
-      "typeVersion": 1,
-      "id": "c18788e6-68e7-45c5-9954-df37a3a6770b",
-      "name": "Sticky Note2"
-    },
-    {
-      "parameters": {
-        "content": "Marks the tweet as **POSTED**. Also adds the result (publish time).",
-        "height": 224,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -64,
-        304
-      ],
-      "typeVersion": 1,
-      "id": "cbffe0e8-b002-4f48-be8c-7640cd4b9a21",
-      "name": "Sticky Note3"
-    },
-    {
-      "parameters": {
-        "content": "## Natural delay\nbetween tweets (rate limit / humanize).",
-        "height": 224,
-        "color": 6
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        208,
-        480
-      ],
-      "typeVersion": 1,
-      "id": "73edada1-714e-4dab-a942-35c0b8b6b732",
-      "name": "Sticky Note4"
-    },
-    {
-      "parameters": {
-        "content": "## Iterates (optional)\nover each filtered tweet entry.",
-        "height": 208,
-        "width": 224,
-        "color": 6
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -656,
-        368
-      ],
-      "typeVersion": 1,
-      "id": "887995fd-3eae-4f63-96b9-ab1518eceb6e",
-      "name": "Sticky Note5"
-    },
-    {
-      "parameters": {
-        "content": "## Runs periodically \nto generate fresh content i.e. daily.",
-        "height": 288,
-        "width": 288
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -1696,
-        -128
-      ],
-      "typeVersion": 1,
-      "id": "9390877b-0ff3-4a3e-9632-f658ad41e5fe",
-      "name": "Sticky Note6"
-    },
-    {
-      "parameters": {
-        "content": "## Fetches data \nfrom an external source API.",
-        "height": 208,
-        "width": 256,
-        "color": 3
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -1264,
-        -96
-      ],
-      "typeVersion": 1,
-      "id": "759251c6-da61-4c27-8fe1-d7e520738aca",
-      "name": "Sticky Note7"
-    },
-    {
-      "parameters": {
-        "content": "## Structures the data.",
-        "height": 208,
-        "width": 262
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -912,
-        -80
-      ],
-      "typeVersion": 1,
-      "id": "4f9f29b1-1699-4d02-bdb6-f4d03aa8e960",
-      "name": "Sticky Note8"
-    },
-    {
-      "parameters": {
-        "content": "## Sends prompt to AI model \nto generate humanized, natural content.",
-        "height": 272,
-        "width": 464,
-        "color": 5
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -560,
+        240,
         -48
       ],
-      "typeVersion": 1,
-      "id": "9109e3aa-dfac-48c2-b2b6-c28ac5f277a8",
-      "name": "Sticky Note9"
+      "id": "4211d575-39b4-4e2d-9a24-c69ed57a812f",
+      "name": "New Tweets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "NsoyDOsUS6a5Wjoj",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
-        "content": "## Adds AI-generated content \nto the Google Sheet to be picked by the second flow later.",
-        "height": 256,
-        "width": 272,
-        "color": 7
+        "sendTo": "vanshmaurya17@gmail.com",
+        "subject": "AI Agent Daily update",
+        "emailType": "text",
+        "message": "=Your agent ran successfully on {{ DateTime.now().toLocaleString({ timeStyle: 'medium' }) }}",
+        "options": {}
       },
-      "type": "n8n-nodes-base.stickyNote",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
       "position": [
-        32,
-        -96
+        -304,
+        -336
       ],
-      "typeVersion": 1,
-      "id": "078c38b9-4a19-4e9f-b804-e872d1ffb0cb",
-      "name": "Sticky Note10"
+      "id": "4b00162b-1364-4b2a-9f77-4f72df373e6b",
+      "name": "Send a message1",
+      "webhookId": "8f1ec8cb-a77d-416e-bc0e-361dea157a3d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SE5WmZAj9S3wX1d6",
+          "name": "Gmail account"
+        }
+      }
     },
     {
       "parameters": {
-        "content": "## First Flow\nRuns to fetch daily news, and generate tweets over it\n\n\n\n\n\n\n\n## Second Flow\nTriggered after **random** time if there is an updated row",
-        "height": 320,
+        "content": "## Updates via mail\nThe first workflow has been executed",
+        "height": 256,
+        "width": 224,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -2016,
-        96
+        -368,
+        -432
       ],
       "typeVersion": 1,
-      "id": "4f9251d9-8297-4f16-95c6-5176e2588e19",
-      "name": "Sticky Note11"
+      "id": "63c44003-26c1-49ef-a36e-f9e0b8a38171",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## Updates via mail\nTweets that were posted",
+        "height": 224,
+        "width": 224,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "e1601e7f-bd35-44fd-b40d-cdcbdbfbe31d",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "sendTo": "vanshmaurya17@gmail.com",
+        "subject": "X Tweet Success",
+        "message": "={{ '<h2>The following tweets were posted:</h2><br><br>' + $json.data.map(t => t.Tweets).join('<br><br>') }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        224
+      ],
+      "id": "ba2aacd2-d6eb-4eb2-a806-479c1b0070df",
+      "name": "Send a message",
+      "webhookId": "dc8904f6-e316-4042-ac5a-802178100ac4",
+      "notesInFlow": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SE5WmZAj9S3wX1d6",
+          "name": "Gmail account"
+        }
+      },
+      "notes": "## Email the posted tweets \nfor user's tweet logs"
+    },
+    {
+      "parameters": {
+        "content": "## Combine\nmultiple tweets in one ",
+        "height": 224,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -384,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "2bd7e1e2-9a5f-442e-8799-98bca70741c1",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1936,
+        704
+      ],
+      "id": "ddb4140d-949a-408e-a69b-cc138b69a940",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "vanshmaurya17@gmail.com",
+        "subject": "Error in workflow",
+        "emailType": "text",
+        "message": "=Error message:  {{ $json.execution.error.message }}\nLast node executed: {{ $json.execution.lastNodeExecuted }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1712,
+        704
+      ],
+      "id": "00e568ce-6075-47bb-a249-ceaea7742258",
+      "name": "Error Report",
+      "webhookId": "5a55ec71-48e1-43b7-9195-87534df4a683",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SE5WmZAj9S3wX1d6",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Third Flow\nExecuted when an error occurs in the workflows.",
+        "height": 240,
+        "width": 464,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2000,
+        624
+      ],
+      "typeVersion": 1,
+      "id": "936bf09a-3237-4040-8b87-ff06e4944038",
+      "name": "Sticky Note16"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": 231,
+            "url": "https://luc27av.app.n8n.cloud/execution/workflow/1/231",
+            "retryOf": "34",
+            "error": {
+              "message": "Example Error Message",
+              "stack": "Stacktrace"
+            },
+            "lastNodeExecuted": "Node With Error",
+            "mode": "manual"
+          },
+          "workflow": {
+            "id": "1",
+            "name": "Example Workflow"
+          }
+        }
+      }
+    ]
+  },
   "connections": {
-    "HTTP Request2": {
-      "main": [
-        [
-          {
-            "node": "Code",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code": {
-      "main": [
-        [
-          {
-            "node": "Message a model",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Loop Over Items": {
       "main": [
-        [],
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "Create Tweet",
@@ -623,18 +832,7 @@
       "main": [
         [
           {
-            "node": "HTTP Request2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Message a model": {
-      "main": [
-        [
-          {
-            "node": "Append row in sheet",
+            "node": "News API",
             "type": "main",
             "index": 0
           }
@@ -673,6 +871,101 @@
           }
         ]
       ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop news",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "News API": {
+      "main": [
+        [
+          {
+            "node": "JS Restructure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JS Restructure": {
+      "main": [
+        [
+          {
+            "node": "Loop news",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop news": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini": {
+      "main": [
+        [
+          {
+            "node": "New Tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Tweets": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Error Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -681,7 +974,7 @@
     "saveExecutionProgress": true,
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "8aeb8c23-65a5-49c0-8fd2-1ca7b57cb9cd",
+  "versionId": "80f65f9d-56cc-49f2-8ec3-291a295e7493",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "4ce639107ffc5292ba6ea24921c67b686e6b4a16acec51000c57403bb37bd292"
