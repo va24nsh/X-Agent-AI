@@ -3,7 +3,8 @@
   "nodes": [
     {
       "parameters": {
-        "amount": "={{ 300 + Math.floor(Math.random() * 180) }}"
+        "amount": "={{ 30 + Math.floor(Math.random() * 30) }}",
+        "unit": "minutes"
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
@@ -521,7 +522,7 @@
               "role": "model"
             },
             {
-              "content": "=Craft a tweet based on this input: {{ $json.tweeet }}. Use the following hashtags in a natural, relevant way: {{ $json.tags }}.\n\nMake it feel like it was written by a thoughtful human — not too robotic or forced. Keep the tone confident, insightful, and readable.\n\nImportant:\n\nKeep the entire output within 250 characters (including hashtags, punctuation, and spaces).\n\nDo not mention AI, LLMs, or give any indication that the tweet was generated or automated.\n\nReturn only the final tweet as a single text block, ready for posting."
+              "content": "=Craft a tweet based on this input: {{ $json.tweeet }}. Use the following hashtags in a natural, relevant way: {{ $json.tags }}.\n\nMake it feel like it was written by a thoughtful and curious human — not too robotic or forced. Keep the tone confident, insightful and readable.\n\nThe tweet should also be engaging to audience.\n\nImportant:\n\nKeep the entire output within 250 characters (including hashtags, punctuation, and spaces).\n\nDo not mention AI, LLMs, or give any indication that the tweet was generated or automated.\n\nIf the data is not sufficient, search the web as well.\n\nReturn only the final tweet as a single text block, ready for posting."
             }
           ]
         },
@@ -627,12 +628,13 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        -304,
-        -336
+        -160,
+        -352
       ],
       "id": "4b00162b-1364-4b2a-9f77-4f72df373e6b",
       "name": "Send a message1",
       "webhookId": "8f1ec8cb-a77d-416e-bc0e-361dea157a3d",
+      "executeOnce": true,
       "credentials": {
         "gmailOAuth2": {
           "id": "SE5WmZAj9S3wX1d6",
@@ -649,8 +651,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -368,
-        -432
+        -224,
+        -464
       ],
       "typeVersion": 1,
       "id": "63c44003-26c1-49ef-a36e-f9e0b8a38171",
@@ -974,7 +976,7 @@
     "saveExecutionProgress": true,
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "80f65f9d-56cc-49f2-8ec3-291a295e7493",
+  "versionId": "b62beebb-a179-450f-8a4a-da614e9dcbb5",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "4ce639107ffc5292ba6ea24921c67b686e6b4a16acec51000c57403bb37bd292"
