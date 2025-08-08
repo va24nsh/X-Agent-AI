@@ -3,14 +3,14 @@
   "nodes": [
     {
       "parameters": {
-        "amount": "={{ 30 + Math.floor(Math.random() * 30) }}",
+        "amount": "={{ 60 + Math.floor(Math.random() * 60) }}",
         "unit": "minutes"
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        224,
-        560
+        -336,
+        528
       ],
       "id": "0f8322f1-5236-42c9-b221-9667aeb35f71",
       "name": "Wait",
@@ -39,8 +39,8 @@
       "type": "n8n-nodes-base.twitter",
       "typeVersion": 2,
       "position": [
-        -352,
-        560
+        -48,
+        528
       ],
       "id": "405fbdba-4105-4b97-9050-709c7fafed7c",
       "name": "Create Tweet",
@@ -60,7 +60,8 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 6
+              "field": "hours",
+              "hoursInterval": 6
             }
           ]
         }
@@ -195,8 +196,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        -80,
-        560
+        224,
+        528
       ],
       "id": "378f4286-4f1b-4d44-ad77-a9d665871918",
       "name": "Update row in sheet",
@@ -278,8 +279,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -416,
-        480
+        -112,
+        448
       ],
       "typeVersion": 1,
       "id": "c18788e6-68e7-45c5-9954-df37a3a6770b",
@@ -293,8 +294,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -144,
-        480
+        160,
+        448
       ],
       "typeVersion": 1,
       "id": "cbffe0e8-b002-4f48-be8c-7640cd4b9a21",
@@ -308,8 +309,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        160,
-        464
+        -400,
+        432
       ],
       "typeVersion": 1,
       "id": "73edada1-714e-4dab-a942-35c0b8b6b732",
@@ -385,7 +386,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -272,
+        -144,
         -128
       ],
       "typeVersion": 1,
@@ -401,7 +402,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        160,
+        256,
         -176
       ],
       "typeVersion": 1,
@@ -424,11 +425,13 @@
       "name": "Sticky Note11"
     },
     {
-      "parameters": {},
+      "parameters": {
+        "amount": 10
+      },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        480,
+        -304,
         -48
       ],
       "id": "269f339e-766b-48b1-b348-173ca490277f",
@@ -468,7 +471,7 @@
     },
     {
       "parameters": {
-        "url": "https://newsdata.io/api/1/news?apikey=pub_203264e38665cb9f7b2c5832471b57b9f808a&language=en&q=\"Artificial Intelligence\" AND \"Automation\" AND \"Startup\"",
+        "url": "https://newsdata.io/api/1/news?apikey=pub_203264e38665cb9f7b2c5832471b57b9f808a&language=en&q=\"ChatGPT\" OR \"GPT-4\" OR \"Claude 3\" OR \"OpenAI\" OR \"LangChain\" OR \"AGI\" OR \"AI tools\"",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -483,7 +486,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst articles = $input.first().json.results || []\n\nreturn articles.map(article => ({\n  json: {\n    tweeet: article.description || null,\n    tags: article.keywords || null\n  }\n}));\n"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst articles = $input.first().json.results || []\n\nreturn articles.map(article => ({\n  json: {\n    tweeet: article.description || null\n  }\n}));\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -511,9 +514,9 @@
       "parameters": {
         "modelId": {
           "__rl": true,
-          "value": "models/gemini-2.5-pro",
+          "value": "models/gemini-2.5-flash",
           "mode": "list",
-          "cachedResultName": "models/gemini-2.5-pro"
+          "cachedResultName": "models/gemini-2.5-flash"
         },
         "messages": {
           "values": [
@@ -522,7 +525,7 @@
               "role": "model"
             },
             {
-              "content": "=Craft a tweet based on this input: {{ $json.tweeet }}. Use the following hashtags in a natural, relevant way: {{ $json.tags }}.\n\nMake it feel like it was written by a thoughtful and curious human — not too robotic or forced. Keep the tone confident, insightful and readable.\n\nThe tweet should also be engaging to audience.\n\nImportant:\n\nKeep the entire output within 250 characters (including hashtags, punctuation, and spaces).\n\nDo not mention AI, LLMs, or give any indication that the tweet was generated or automated.\n\nIf the data is not sufficient, search the web as well.\n\nReturn only the final tweet as a single text block, ready for posting."
+              "content": "=Craft a tweet based on this input: {{ $json.tweeet }}. Also add relevant hastags for maximum outreach and trending tweet.\n\nMake it feel like it was written by a thoughtful and curious human — not too robotic or forced. Keep the tone confident, insightful and readable.\n\nThe tweet should also be engaging to audience.\n\nImportant:\n\nKeep the entire output within 250 characters (including hashtags, punctuation, and spaces).\n\nDo not mention AI, LLMs, or give any indication that the tweet was generated or automated.\n\nIf the tweet input is not sufficient, search the web for authenticity and completion.\n\nReturn only the final tweet as a single text block, ready for posting."
             }
           ]
         },
@@ -531,7 +534,7 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -240,
+        -96,
         -48
       ],
       "id": "7ae44fa1-cb34-467f-801a-dd4c77ec7ae9",
@@ -605,7 +608,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        240,
+        336,
         -48
       ],
       "id": "4211d575-39b4-4e2d-9a24-c69ed57a812f",
@@ -652,7 +655,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         -224,
-        -464
+        -448
       ],
       "typeVersion": 1,
       "id": "63c44003-26c1-49ef-a36e-f9e0b8a38171",
@@ -766,29 +769,7 @@
       "name": "Sticky Note16"
     }
   ],
-  "pinData": {
-    "Error Trigger": [
-      {
-        "json": {
-          "execution": {
-            "id": 231,
-            "url": "https://luc27av.app.n8n.cloud/execution/workflow/1/231",
-            "retryOf": "34",
-            "error": {
-              "message": "Example Error Message",
-              "stack": "Stacktrace"
-            },
-            "lastNodeExecuted": "Node With Error",
-            "mode": "manual"
-          },
-          "workflow": {
-            "id": "1",
-            "name": "Example Workflow"
-          }
-        }
-      }
-    ]
-  },
+  "pinData": {},
   "connections": {
     "Loop Over Items": {
       "main": [
@@ -801,7 +782,7 @@
         ],
         [
           {
-            "node": "Create Tweet",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
@@ -812,7 +793,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Create Tweet",
             "type": "main",
             "index": 0
           }
@@ -856,7 +837,7 @@
       "main": [
         [
           {
-            "node": "Wait",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -878,7 +859,7 @@
       "main": [
         [
           {
-            "node": "Loop news",
+            "node": "Gemini",
             "type": "main",
             "index": 0
           }
@@ -929,7 +910,7 @@
         ],
         [
           {
-            "node": "Gemini",
+            "node": "Wait1",
             "type": "main",
             "index": 0
           }
@@ -951,7 +932,7 @@
       "main": [
         [
           {
-            "node": "Wait1",
+            "node": "Loop news",
             "type": "main",
             "index": 0
           }
@@ -974,9 +955,10 @@
   "settings": {
     "executionOrder": "v1",
     "saveExecutionProgress": true,
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "nN9n1CA2JSmAvdCf"
   },
-  "versionId": "b62beebb-a179-450f-8a4a-da614e9dcbb5",
+  "versionId": "1de40174-86f7-457b-9362-4057dc686f30",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "4ce639107ffc5292ba6ea24921c67b686e6b4a16acec51000c57403bb37bd292"
